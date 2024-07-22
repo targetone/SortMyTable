@@ -1,0 +1,20 @@
+th[aria-sort]:after {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    position: absolute;
+    margin-left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+th[aria-sort="ascending"]:after {
+    content: "\f0de"; /* Código Unicode para o ícone sort-up */
+}
+
+th[aria-sort="descending"]:after {
+    content: "\f0dd"; /* Código Unicode para o ícone sort-down */
+}
+
+th[data-sort-ignore] {
+    cursor: not-allowed;
+}
