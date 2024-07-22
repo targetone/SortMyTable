@@ -30,27 +30,6 @@
             position: relative;
             padding-right: 1.5em;
         }
-
-        th[aria-sort]:after {
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            position: absolute;
-            margin-left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        th[aria-sort="ascending"]:after {
-            content: "\f0de"; /* Unicode para o ícone de ordenação ascendente */
-        }
-
-        th[aria-sort="descending"]:after {
-            content: "\f0dd"; /* Unicode para o ícone de ordenação descendente */
-        }
-
-        th[data-sort-ignore] {
-            cursor: default;
-        }
     </style>
 </head>
 <body>
