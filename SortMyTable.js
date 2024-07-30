@@ -37,6 +37,8 @@ class SortMyTable {
     }
 
     compareCells(cellA, cellB, isNumber, isDate, order) {
+        if (!cellA || !cellB) return 0; // Se uma das células não existe, retorna 0 para manter a ordem.
+        
         const valueA = cellA.textContent.trim();
         const valueB = cellB.textContent.trim();
 
