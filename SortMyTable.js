@@ -98,6 +98,12 @@ class SortMyTable {
                 const [hours, minutes, seconds] = time.split(':');
                 return new Date(year, month - 1, day, hours, minutes, seconds);
             }}, // DD/MM/YYYY HH:MM:SS
+            { regex: /^\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}$/, parse: str => {
+                    const [date, time] = str.split(' ');
+                    const [day, month, year] = date.split('/');
+                    const [hours, minutes] = time.split(':');
+                    return new Date(year, month - 1, day, hours, minutes, 0);
+            }}, // DD/MM/YYYY HH:MM
             { regex: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/, parse: str => new Date(str) }, // YYYY-MM-DDTHH:MM:SS
             { regex: /^\d{2} \w{3} \d{4}$/, parse: str => new Date(str) } // DD MMM YYYY
         ];
@@ -120,9 +126,9 @@ class SortMyTable {
 
     applySortingConfiguration(config) {
         if (config && typeof config.index === 'number' && config.order) {
-            this.sortColumn(config.index);
             const header = this.headers[config.index];
-            header.setAttribute('aria-sort', config.order);
+            header.setAttribute('aria-sort', config.order === 'ascending' ? 'descending' : 'ascending');
+            this.sortColumn(config.index);
         }
     }
 
