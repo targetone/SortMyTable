@@ -25,26 +25,27 @@ class SortMyTable {
         const isNumber = header.hasAttribute('data-is-number');
         const isDate = header.hasAttribute('data-is-date');
         const order = header.getAttribute('aria-sort') === 'ascending' ? 'descending' : 'ascending';
+        const decimalSeparator = header.getAttribute('data-decimal-separator') || null;
 
         this.headers.forEach(h => h.removeAttribute('aria-sort'));
         header.setAttribute('aria-sort', order);
 
         const rows = Array.from(this.table.tBodies[0].rows);
-        rows.sort((a, b) => this.compareCells(a.cells[index], b.cells[index], isNumber, isDate, order));
+        rows.sort((a, b) => this.compareCells(a.cells[index], b.cells[index], isNumber, isDate, order, decimalSeparator));
 
         rows.forEach(row => this.table.tBodies[0].appendChild(row));
         this.currentSorting = { index, order };
     }
 
-    compareCells(cellA, cellB, isNumber, isDate, order) {
+    compareCells(cellA, cellB, isNumber, isDate, order, decimalSeparator) {
         if (!cellA || !cellB) return 0; // Se uma das células não existe, retorna 0 para manter a ordem.
         
         const valueA = cellA.textContent.trim();
         const valueB = cellB.textContent.trim();
 
         if (isNumber) {
-            const numA = this.parseNumber(valueA);
-            const numB = this.parseNumber(valueB);
+            const numA = this.parseNumber(valueA, decimalSeparator);
+            const numB = this.parseNumber(valueB, decimalSeparator);
             return order === 'ascending' ? numA - numB : numB - numA;
         } else if (isDate) {
             const dateA = this.parseDate(valueA);
@@ -55,21 +56,35 @@ class SortMyTable {
         }
     }
 
-    parseNumber(value) {
+    parseNumber(value, decimalSeparator) {
         // Remove qualquer caractere que não seja dígito, ponto, vírgula ou sinal de menos
         let cleanValue = value.replace(/[^0-9.,-]+/g, '').trim();
-    
-        // Se o valor contiver uma vírgula e um ponto, assumimos que é o formato americano (US$ 10,000.99)
-        if (cleanValue.includes(',') && cleanValue.includes('.')) {
-            cleanValue = cleanValue.replace(/,/g, ''); // Remove as vírgulas
-        } else if (cleanValue.includes(',')) {
-            // Se contiver apenas vírgulas, assumimos que é o formato europeu (R$ 4.321,64)
-            cleanValue = cleanValue.replace(/\./g, '').replace(',', '.'); // Troca pontos por nada e vírgulas por pontos
+
+        if (decimalSeparator === ',' || decimalSeparator === '.') {
+            const otherSep = decimalSeparator === ',' ? '.' : ',';
+
+            // remove separador de milhar (o "outro" caractere)
+            if (cleanValue.includes(otherSep)) {
+                const regexOther = new RegExp('\\' + otherSep, 'g');
+                cleanValue = cleanValue.replace(regexOther, '');
+            }
+
+            // troca o separador decimal configurado por ponto,
+            // que é o que o parseFloat entende
+            const regexDec = new RegExp('\\' + decimalSeparator, 'g');
+            cleanValue = cleanValue.replace(regexDec, '.');
+        } else {
+            // Se o valor contiver uma vírgula e um ponto, assumimos que é o formato americano (US$ 10,000.99)
+            if (cleanValue.includes(',') && cleanValue.includes('.')) {
+                cleanValue = cleanValue.replace(/,/g, '');
+            } else if (cleanValue.includes(',')) {
+                // Se contiver apenas vírgulas, assumimos que é o formato europeu (R$ 4.321,64)
+                cleanValue = cleanValue.replace(/\./g, '').replace(',', '.');
+            }
         }
-    
-        const parsedValue = parseFloat(cleanValue);
-    
+        
         // Se o valor não for um número, retornamos 99999999999 para indicar texto puro
+        const parsedValue = parseFloat(cleanValue);
         return isNaN(parsedValue) ? 99999999999 : parsedValue;
     }
 

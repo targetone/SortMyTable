@@ -36,7 +36,9 @@ Primeiro, inclua a biblioteca SortMyTable no seu projeto. Certifique-se de inclu
 
 ### Estrutura da Tabela
 
-Crie a tabela com os dados que você deseja ordenar. Utilize os atributos `data-is-number` e `data-is-date` para indicar colunas com números e datas, respectivamente. Use `data-sort-ignore` para colunas que não devem ser ordenáveis.
+Crie a tabela com os dados que você deseja ordenar. Utilize os atributos `data-is-number` e `data-is-date` para indicar colunas com números e datas, respectivamente. Use `data-sort-ignore` para colunas que não devem ser ordenáveis`.
+
+Se desejar controlar explicitamente o parsing numérico, adicione `data-decimal-separator=","` ou `"."` no `<th>` correspondente. Quando presente, esse atributo define o separador decimal usado pela função de conversão numérica da biblioteca, prevalecendo sobre a detecção automática de formato (pt-BR vs en-US vs número simples).
 
 ```html
 <table id="myTable">
@@ -44,13 +46,13 @@ Crie a tabela com os dados que você deseja ordenar. Utilize os atributos `data-
         <tr>
             <th>Nome</th>
             <th data-sort-ignore>Cargo</th>
-            <th data-is-number>Salário</th>
+            <th data-is-number data-decimal-separator=",">Salário</th>
             <th data-is-number>Idade</th>
             <th data-is-date>Data de Admissão</th>
         </tr>
     </thead>
     <tbody>
-        <tr><td>John Doe</td><td>Desenvolvedor</td><td>US$ 50,000.00</td><td>28</td><td>15/01/2018</td></tr>
+        <tr><td>John Doe</td><td>Desenvolvedor</td><td>R$ 50.000,00</td><td>28</td><td>15/01/2018</td></tr>
         <tr><td>Jane Smith</td><td>Designer</td><td>US$ 60,000.50</td><td>34</td><td>23/08/2017</td></tr>
         <!-- Mais linhas aqui -->
     </tbody>
